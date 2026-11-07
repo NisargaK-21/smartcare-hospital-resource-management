@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 
 const express = require("express");
@@ -8,6 +7,8 @@ const pool = require("./config/db");
 const departmentRoutes = require("./routes/department.routes");
 const wardRoutes = require("./routes/ward.routes");
 const roomRoutes = require("./routes/room.routes");
+const bedRoutes = require("./routes/bed.routes");
+
 const app = express();
 
 app.use(helmet());
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use("/api/departments", departmentRoutes);
 app.use("/api/wards", wardRoutes);
 app.use("/api/rooms", roomRoutes);
+app.use("/api/beds", bedRoutes);
 app.get("/", (req, res) => {
   res.json({
     message: "Welcome to SmartCare API",
