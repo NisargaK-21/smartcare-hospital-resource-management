@@ -8,6 +8,7 @@ const departmentRoutes = require("./routes/department.routes");
 const wardRoutes = require("./routes/ward.routes");
 const roomRoutes = require("./routes/room.routes");
 const bedRoutes = require("./routes/bed.routes");
+const patientRoutes = require("./routes/patient.routes");
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use("/api/departments", departmentRoutes);
 app.use("/api/wards", wardRoutes);
 app.use("/api/rooms", roomRoutes);
 app.use("/api/beds", bedRoutes);
+app.use("/api/patients", patientRoutes);
 app.get("/", (req, res) => {
   res.json({
     message: "Welcome to SmartCare API",
