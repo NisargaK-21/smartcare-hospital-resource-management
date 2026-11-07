@@ -6,6 +6,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const pool = require("./config/db");
 const departmentRoutes = require("./routes/department.routes");
+const wardRoutes = require("./routes/ward.routes");
 const app = express();
 
 app.use(helmet());
@@ -16,7 +17,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use("/api/departments", departmentRoutes);
-
+app.use("/api/wards", wardRoutes);
 app.get("/", (req, res) => {
   res.json({
     message: "Welcome to SmartCare API",
