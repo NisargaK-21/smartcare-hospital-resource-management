@@ -11,6 +11,10 @@ const bedRoutes = require("./routes/bed.routes");
 const patientRoutes = require("./routes/patient.routes");
 const roleRoutes = require("./routes/role.routes");
 const staffRoutes = require("./routes/staff.routes");
+const admissionRoutes = require("./routes/admission.routes");
+const bedReservationRoutes = require("./routes/bedReservation.routes");
+const transferRoutes = require("./routes/transfer.routes");
+const dischargeRoutes = require("./routes/discharge.routes");
 
 const app = express();
 
@@ -28,6 +32,10 @@ app.use("/api/beds", bedRoutes);
 app.use("/api/patients", patientRoutes);
 app.use("/api/roles", roleRoutes);
 app.use("/api/staff", staffRoutes);
+app.use("/api/admissions", admissionRoutes);
+app.use("/api/bed-reservations", bedReservationRoutes);
+app.use("/api/transfers", transferRoutes);
+app.use("/api/discharges", dischargeRoutes);
 
 app.get("/", (req, res) => {
   res.json({
