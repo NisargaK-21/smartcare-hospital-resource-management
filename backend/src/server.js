@@ -11,6 +11,7 @@ const bedRoutes = require("./routes/bed.routes");
 const patientRoutes = require("./routes/patient.routes");
 const roleRoutes = require("./routes/role.routes");
 const staffRoutes = require("./routes/staff.routes");
+const dashboardRoutes = require("./routes/dashboard.routes");
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use("/api/beds", bedRoutes);
 app.use("/api/patients", patientRoutes);
 app.use("/api/roles", roleRoutes);
 app.use("/api/staff", staffRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 app.get("/", (req, res) => {
   res.json({
