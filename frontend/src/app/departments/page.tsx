@@ -70,10 +70,10 @@ export default function DepartmentsPage() {
         <button onClick={openAdd} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">+ Add Department</button>
       } />
       <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 Search departments..." className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full max-w-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        {loading ? <div className="p-8 text-center text-gray-400">Loading...</div> : (
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        {loading ? <div className="p-8 text-center text-slate-500 font-medium">Loading departments...</div> : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
+            <thead className="bg-slate-100 text-slate-800 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
               <tr>
                 <th className="text-left px-4 py-3">Code</th>
                 <th className="text-left px-4 py-3">Name</th>
@@ -82,19 +82,19 @@ export default function DepartmentsPage() {
                 <th className="text-left px-4 py-3">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-slate-100">
               {filtered.length === 0 ? (
-                <tr><td colSpan={5} className="text-center py-10 text-gray-400">No departments found</td></tr>
+                <tr><td colSpan={5} className="text-center py-10 text-slate-500 font-medium">No departments found</td></tr>
               ) : filtered.map(d => (
-                <tr key={d.department_id} className="border-b border-gray-50 hover:bg-gray-50">
-                  <td className="px-4 py-3 font-mono text-xs text-gray-500">{d.department_code}</td>
-                  <td className="px-4 py-3 font-medium text-gray-800">{d.department_name}</td>
-                  <td className="px-4 py-3 text-gray-500 text-xs">{d.description ?? "—"}</td>
+                <tr key={d.department_id} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-4 py-3 font-mono text-xs font-bold text-slate-900 bg-slate-50">{d.department_code}</td>
+                  <td className="px-4 py-3 font-bold text-slate-900">{d.department_name}</td>
+                  <td className="px-4 py-3 text-slate-700 text-xs font-medium">{d.description ?? "—"}</td>
                   <td className="px-4 py-3"><Badge label={d.is_active ? "Active" : "Inactive"} color={d.is_active ? "green" : "red"} /></td>
                   <td className="px-4 py-3 flex gap-2">
-                    <button onClick={() => router.push(`/departments/${d.department_id}`)} className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-medium">View</button>
-                    <button onClick={() => openEdit(d)} className="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg text-xs font-medium">Edit</button>
-                    {d.is_active && <button onClick={() => handleDeactivate(d.department_id)} className="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-medium">Deactivate</button>}
+                    <button onClick={() => router.push(`/departments/${d.department_id}`)} className="bg-slate-100 hover:bg-slate-200 text-slate-800 px-3 py-1.5 rounded-lg text-xs font-bold">View</button>
+                    <button onClick={() => openEdit(d)} className="bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 px-3 py-1.5 rounded-lg text-xs font-bold">Edit</button>
+                    {d.is_active && <button onClick={() => handleDeactivate(d.department_id)} className="bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 px-3 py-1.5 rounded-lg text-xs font-bold">Deactivate</button>}
                   </td>
                 </tr>
               ))}

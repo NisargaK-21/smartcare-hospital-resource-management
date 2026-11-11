@@ -90,7 +90,7 @@ export default function BedsPage() {
       {/* Summary chips */}
       <div className="flex gap-3 flex-wrap">
         {(["AVAILABLE", "OCCUPIED", "RESERVED", "MAINTENANCE"] as const).map(s => (
-          <span key={s} className={`px-3 py-1 rounded-full text-xs font-semibold ${s === "AVAILABLE" ? "bg-green-100 text-green-700" : s === "OCCUPIED" ? "bg-red-100 text-red-700" : s === "RESERVED" ? "bg-amber-100 text-amber-700" : "bg-gray-100 text-gray-600"}`}>
+          <span key={s} className={`px-3 py-1 rounded-full text-xs font-bold border ${s === "AVAILABLE" ? "bg-emerald-100 text-emerald-900 border-emerald-300" : s === "OCCUPIED" ? "bg-rose-100 text-rose-900 border-rose-300" : s === "RESERVED" ? "bg-amber-100 text-amber-900 border-amber-300" : "bg-slate-100 text-slate-800 border-slate-300"}`}>
             {s}: {counts[s]}
           </span>
         ))}
@@ -98,24 +98,24 @@ export default function BedsPage() {
 
       {/* Filters */}
       <div className="flex gap-3 flex-wrap">
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none">
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="border border-slate-300 rounded-lg px-3 py-2 text-sm font-medium text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="ALL">All Statuses</option>
           {BED_STATUSES.map(s => <option key={s}>{s}</option>)}
         </select>
-        <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none">
+        <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="border border-slate-300 rounded-lg px-3 py-2 text-sm font-medium text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="ALL">All Types</option>
           {BED_TYPES.map(t => <option key={t}>{t}</option>)}
         </select>
-        <select value={wardFilter} onChange={e => setWardFilter(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none">
+        <select value={wardFilter} onChange={e => setWardFilter(e.target.value)} className="border border-slate-300 rounded-lg px-3 py-2 text-sm font-medium text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="ALL">All Wards</option>
           {uniqueWards.map(w => <option key={w}>{w}</option>)}
         </select>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        {loading ? <div className="p-8 text-center text-gray-400">Loading...</div> : (
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        {loading ? <div className="p-8 text-center text-slate-500 font-medium">Loading beds...</div> : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
+            <thead className="bg-slate-100 text-slate-800 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
               <tr>
                 <th className="text-left px-4 py-3">Bed #</th>
                 <th className="text-left px-4 py-3">Type</th>
@@ -126,23 +126,23 @@ export default function BedsPage() {
                 <th className="text-left px-4 py-3">Actions</th>
               </tr>
             </thead>
-            <tbody>
-              {filtered.length === 0 ? <tr><td colSpan={7} className="text-center py-10 text-gray-400">No beds match the selected filters</td></tr>
+            <tbody className="divide-y divide-slate-100">
+              {filtered.length === 0 ? <tr><td colSpan={7} className="text-center py-10 text-slate-500 font-medium">No beds match the selected filters</td></tr>
                 : filtered.map(b => (
-                  <tr key={b.bed_id} className="border-b border-gray-50 hover:bg-gray-50">
-                    <td className="px-4 py-3 font-medium">{b.bed_number}</td>
-                    <td className="px-4 py-3 text-gray-500 text-xs">{b.bed_type}</td>
+                  <tr key={b.bed_id} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-4 py-3 font-bold text-slate-900">{b.bed_number}</td>
+                    <td className="px-4 py-3 font-semibold text-slate-700 text-xs">{b.bed_type}</td>
                     <td className="px-4 py-3">
-                      <select value={b.bed_status} onChange={e => handleStatusChange(b.bed_id, e.target.value)} className="border border-gray-200 rounded px-2 py-1 text-xs">
+                      <select value={b.bed_status} onChange={e => handleStatusChange(b.bed_id, e.target.value)} className="border border-slate-300 rounded px-2.5 py-1 text-xs font-semibold text-slate-800 bg-white">
                         {BED_STATUSES.map(s => <option key={s}>{s}</option>)}
                       </select>
                     </td>
-                    <td className="px-4 py-3 text-gray-600">{b.room_number}</td>
-                    <td className="px-4 py-3 text-gray-500">{b.ward_name}</td>
-                    <td className="px-4 py-3 text-gray-400 text-xs">{b.department_name}</td>
+                    <td className="px-4 py-3 font-medium text-slate-800">{b.room_number}</td>
+                    <td className="px-4 py-3 font-medium text-slate-800">{b.ward_name}</td>
+                    <td className="px-4 py-3 text-slate-600 text-xs font-medium">{b.department_name}</td>
                     <td className="px-4 py-3 flex gap-2">
-                      <button onClick={() => router.push(`/beds/${b.bed_id}`)} className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-medium">View</button>
-                      {b.is_active && <button onClick={() => handleDeactivate(b.bed_id)} className="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-medium">Deactivate</button>}
+                      <button onClick={() => router.push(`/beds/${b.bed_id}`)} className="bg-slate-100 hover:bg-slate-200 text-slate-800 px-3 py-1.5 rounded-lg text-xs font-bold">View</button>
+                      {b.is_active && <button onClick={() => handleDeactivate(b.bed_id)} className="bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 px-3 py-1.5 rounded-lg text-xs font-bold">Deactivate</button>}
                     </td>
                   </tr>
                 ))}
