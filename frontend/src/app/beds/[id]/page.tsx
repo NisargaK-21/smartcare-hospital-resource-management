@@ -4,13 +4,14 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import PageHeader from "@/components/shared/PageHeader";
 import Badge from "@/components/shared/Badge";
+import ActionError from "@/components/shared/ActionError";
 import { fetchBedById, updateBed, deactivateBed } from "@/lib/api/beds";
 import type { Bed } from "@/types/bed";
 import { BED_STATUSES, BED_TYPES } from "@/lib/utils/constants";
 
 const field = "border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
-const statusColor: Record<string, "green" | "red" | "amber" | "gray"> = {
-  AVAILABLE: "green", OCCUPIED: "red", RESERVED: "amber", MAINTENANCE: "gray",
+const statusColor: Record<string, "green" | "red" | "amber" | "gray" | "blue"> = {
+  AVAILABLE: "green", OCCUPIED: "red", RESERVED: "amber", MAINTENANCE: "gray", CLEANING: "blue",
 };
 
 export default function BedDetailPage() {
@@ -18,44 +19,74 @@ export default function BedDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [bed, setBed] = useState<Bed | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [newStatus, setNewStatus] = useState("");
   const [newType, setNewType] = useState("");
   const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
+  const [deactivating, setDeactivating] = useState(false);
   const [toast, setToast] = useState("");
+  const [actionError, setActionError] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
-    const b = await fetchBedById(Number(id)).catch(() => null);
-    setBed(b);
-    if (b) { setNewStatus(b.bed_status); setNewType(b.bed_type); setDescription(b.description ?? ""); }
-    setLoading(false);
+    setLoadError("");
+    try {
+      const b = await fetchBedById(Number(id));
+      setBed(b);
+      setNewStatus(b.bed_status);
+      setNewType(b.bed_type);
+      setDescription(b.description ?? "");
+    } catch (error) {
+      setBed(null);
+      setLoadError(error instanceof Error ? error.message : "Failed to fetch bed.");
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
   useEffect(() => { load(); }, [load]);
 
   const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
 
-  const handleUpdate = async (data: object) => {
+  const handleUpdate = async (data: Partial<Bed>) => {
     setSaving(true);
-    await updateBed(Number(id), data).catch(() => {});
-    showToast("Bed updated"); load(); setSaving(false);
+    setActionError("");
+    try {
+      await updateBed(Number(id), data);
+      showToast("Bed updated");
+      await load();
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "Failed to update bed");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDeactivate = async () => {
     if (!window.confirm("Deactivate this bed?")) return;
-    await deactivateBed(Number(id)).catch(() => {});
-    router.push("/beds");
+    setDeactivating(true);
+    setActionError("");
+    try {
+      await deactivateBed(Number(id));
+      router.push("/beds");
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "Failed to deactivate bed");
+    } finally {
+      setDeactivating(false);
+    }
   };
 
   if (loading) return <div className="p-8 text-center text-gray-400">Loading...</div>;
+  if (loadError) return <div role="alert" className="p-8 text-center text-red-600">{loadError}</div>;
   if (!bed) return <div className="p-8 text-center text-red-400">Bed not found</div>;
 
   return (
     <div className="space-y-5 max-w-2xl">
+      <ActionError message={actionError} />
       <PageHeader title={`Bed ${bed.bed_number}`} subtitle={`${bed.room_number} · ${bed.ward_name}`} action={
         <div className="flex gap-2">
-          {bed.is_active && <button onClick={handleDeactivate} className="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg text-sm font-medium">Deactivate</button>}
+          {bed.is_active && <button disabled={deactivating} onClick={handleDeactivate} className="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50">{deactivating ? "Deactivating..." : "Deactivate"}</button>}
           <button onClick={() => router.back()} className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm">← Back</button>
         </div>
       } />
@@ -79,6 +110,12 @@ export default function BedDetailPage() {
             <p className="text-xs text-gray-500">Bed Type</p>
             <p className="font-medium text-gray-800">{bed.bed_type}</p>
           </div>
+          <div>
+            <p className="text-xs text-gray-500">Activity</p>
+            <Badge color={bed.is_active ? "green" : "gray"}>
+              {bed.is_active ? "ACTIVE" : "INACTIVE"}
+            </Badge>
+          </div>
         </div>
 
         <hr className="border-gray-100" />
@@ -90,7 +127,7 @@ export default function BedDetailPage() {
             <select value={newStatus} onChange={e => setNewStatus(e.target.value)} className={field}>
               {BED_STATUSES.map(s => <option key={s}>{s}</option>)}
             </select>
-            <button disabled={saving} onClick={() => handleUpdate({ bed_status: newStatus })} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50">Update</button>
+            <button disabled={saving} onClick={() => handleUpdate({ bed_status: newStatus as Bed["bed_status"] })} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50">Update</button>
           </div>
         </div>
 
@@ -101,7 +138,7 @@ export default function BedDetailPage() {
             <select value={newType} onChange={e => setNewType(e.target.value)} className={field}>
               {BED_TYPES.map(t => <option key={t}>{t}</option>)}
             </select>
-            <button disabled={saving} onClick={() => handleUpdate({ bed_type: newType })} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50">Update</button>
+            <button disabled={saving} onClick={() => handleUpdate({ bed_type: newType as Bed["bed_type"] })} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50">Update</button>
           </div>
         </div>
 
@@ -118,4 +155,3 @@ export default function BedDetailPage() {
     </div>
   );
 }
-

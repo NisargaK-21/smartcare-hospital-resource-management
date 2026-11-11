@@ -2,6 +2,12 @@ const pool = require("../config/db");
 
 const VALID_BED_TYPES = ["GENERAL", "ICU", "EMERGENCY", "PRIVATE"];
 const VALID_ADMISSION_TYPES = ["PLANNED", "EMERGENCY", "TRANSFER"];
+const BED_ALLOCATION_TYPES = {
+    GENERAL: { bedType: "STANDARD" },
+    ICU: { bedType: "ICU" },
+    EMERGENCY: { bedType: "STANDARD" },
+    PRIVATE: { bedType: "STANDARD", roomType: "PRIVATE" }
+};
 
 const ADMISSION_DETAILS_QUERY = `
     SELECT
@@ -297,10 +303,16 @@ const allocateBed = async (req, res) => {
             });
         }
 
+        const bedAllocationType = BED_ALLOCATION_TYPES[admission.required_bed_type];
+        const roomTypeCondition = bedAllocationType.roomType
+            ? "AND r.room_type = $2"
+            : "";
         const bedResult = await client.query(
             `SELECT b.*
              FROM public.beds b
+             JOIN public.rooms r ON r.room_id = b.room_id
              WHERE b.bed_type = $1
+               ${roomTypeCondition}
                AND b.bed_status = 'AVAILABLE'
                AND b.is_active = TRUE
                AND NOT EXISTS (
@@ -312,7 +324,9 @@ const allocateBed = async (req, res) => {
              ORDER BY b.bed_id
              LIMIT 1
              FOR UPDATE OF b SKIP LOCKED`,
-            [admission.required_bed_type]
+            bedAllocationType.roomType
+                ? [bedAllocationType.bedType, bedAllocationType.roomType]
+                : [bedAllocationType.bedType]
         );
 
         if (bedResult.rows.length === 0) {

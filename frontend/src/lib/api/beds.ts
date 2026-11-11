@@ -56,3 +56,10 @@ export async function deactivateBed(id: number): Promise<Bed> {
   if (!json.success) throw new Error(json.message);
   return json.data;
 }
+
+export async function activateBed(id: number): Promise<Bed> {
+  const res = await fetch(`${API_BASE}/beds/${id}/activate`, { method: "PUT" });
+  const json = await res.json();
+  if (!json.success) throw new Error(json.message);
+  return json.data;
+}
