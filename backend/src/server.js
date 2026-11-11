@@ -15,6 +15,9 @@ const admissionRoutes = require("./routes/admission.routes");
 const bedReservationRoutes = require("./routes/bedReservation.routes");
 const transferRoutes = require("./routes/transfer.routes");
 const dischargeRoutes = require("./routes/discharge.routes");
+const resourceAllocationRoutes = require("./routes/resourceAllocation.routes");
+const maintenanceRoutes = require("./routes/maintenance.routes");
+const resourceAlertRoutes = require("./routes/resourceAlert.routes");
 
 const app = express();
 
@@ -36,6 +39,9 @@ app.use("/api/admissions", admissionRoutes);
 app.use("/api/bed-reservations", bedReservationRoutes);
 app.use("/api/transfers", transferRoutes);
 app.use("/api/discharges", dischargeRoutes);
+app.use("/api/resource-allocations", resourceAllocationRoutes);
+app.use("/api/maintenance", maintenanceRoutes);
+app.use("/api/resource-alerts", resourceAlertRoutes);
 
 app.get("/", (req, res) => {
   res.json({
