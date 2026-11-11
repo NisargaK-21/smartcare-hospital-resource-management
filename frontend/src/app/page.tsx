@@ -1,22 +1,18 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import PageHeader from "@/components/shared/PageHeader";
-import StatCard from "@/components/shared/StatCard";
-import Badge from "@/components/shared/Badge";
-import { fetchDashboardStats, fetchWardOccupancy, fetchDepartmentStats, fetchRecentPatients, fetchStaffSummary } from "@/lib/api/dashboard";
-import type { DashboardStats, WardOccupancy, DepartmentStat, RecentPatient, StaffSummary } from "@/types/dashboard";
-import { formatDate } from "@/lib/utils/formatDate";
+import { useEffect, useState } from "react";
 
-function occupancyColor(rate: number) {
-  if (rate < 60) return "text-green-600";
-  if (rate <= 80) return "text-amber-500";
-  return "text-red-600";
-}
-function occupancyBg(rate: number) {
-  if (rate < 60) return "bg-green-500";
-  if (rate <= 80) return "bg-amber-500";
-  return "bg-red-500";
+interface Stats {
+  total_beds: number;
+  available_beds: number;
+  occupied_beds: number;
+  reserved_beds: number;
+  maintenance_beds: number;
+  total_patients: number;
+  total_staff: number;
+  total_departments: number;
+  total_wards: number;
+  occupancy_rate: number;
 }
 
 export default function DashboardPage() {
