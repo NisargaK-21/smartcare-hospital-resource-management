@@ -1,4 +1,4 @@
-export type BedStatus = "AVAILABLE" | "OCCUPIED" | "RESERVED" | "MAINTENANCE";
+export type BedStatus = "AVAILABLE" | "OCCUPIED" | "RESERVED" | "MAINTENANCE" | "CLEANING";
 export type BedType = "STANDARD" | "ELECTRIC" | "ICU" | "PEDIATRIC" | "BARIATRIC";
 
 export interface Bed {

@@ -176,10 +176,24 @@ const deactivateBed = async (bedId) => {
     return result.rows[0];
 };
 
+const activateBed = async (bedId) => {
+    const result = await pool.query(
+        `UPDATE public.beds
+         SET is_active = TRUE,
+             updated_at = NOW()
+         WHERE bed_id = $1
+         RETURNING *`,
+        [bedId]
+    );
+
+    return result.rows[0];
+};
+
 module.exports = {
     createBed,
     getAllBeds,
     getBedById,
     updateBed,
-    deactivateBed
+    deactivateBed,
+    activateBed
 };

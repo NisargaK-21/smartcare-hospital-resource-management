@@ -19,6 +19,7 @@ const dischargeRoutes = require("./routes/discharge.routes");
 const resourceAllocationRoutes = require("./routes/resourceAllocation.routes");
 const maintenanceRoutes = require("./routes/maintenance.routes");
 const resourceAlertRoutes = require("./routes/resourceAlert.routes");
+const icuResourceRoutes = require("./routes/icuResource.routes");
 
 const dashboardRoutes = require("./routes/dashboard.routes");
 
@@ -47,6 +48,7 @@ app.use("/api/discharges", dischargeRoutes);
 app.use("/api/resource-allocations", resourceAllocationRoutes);
 app.use("/api/maintenance", maintenanceRoutes);
 app.use("/api/resource-alerts", resourceAlertRoutes);
+app.use("/api/icu-resources", icuResourceRoutes);
 
 app.use("/api/dashboard", dashboardRoutes);
 

@@ -12,7 +12,8 @@ const VALID_BED_STATUSES = [
     "AVAILABLE",
     "OCCUPIED",
     "RESERVED",
-    "MAINTENANCE"
+    "MAINTENANCE",
+    "CLEANING"
 ];
 
 // Create bed
@@ -299,10 +300,46 @@ const deactivateBed = async (req, res) => {
     }
 };
 
+const activateBed = async (req, res) => {
+    try {
+        const bedId = Number(req.params.id);
+
+        if (!Number.isInteger(bedId) || bedId <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid bed ID"
+            });
+        }
+
+        const bed = await bedService.activateBed(bedId);
+
+        if (!bed) {
+            return res.status(404).json({
+                success: false,
+                message: "Bed not found"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Bed activated successfully",
+            data: bed
+        });
+    } catch (error) {
+        console.error("Activate bed error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to activate bed"
+        });
+    }
+};
+
 module.exports = {
     createBed,
     getAllBeds,
     getBedById,
     updateBed,
-    deactivateBed
+    deactivateBed,
+    activateBed
 };

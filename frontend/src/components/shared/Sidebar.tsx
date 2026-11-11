@@ -20,7 +20,9 @@ const resourceOperationsLinks = [
   { icon: "🔄", label: "Transfers", href: "/transfers" },
   { icon: "🏃", label: "Discharges", href: "/discharges" },
   { icon: "🫁", label: "ICU Resources", href: "/icu-resources" },
+  { icon: "📦", label: "Resource Allocations", href: "/resource-allocations" },
   { icon: "🔧", label: "Maintenance", href: "/maintenance" },
+  { icon: "🚨", label: "Resource Alerts", href: "/resource-alerts" },
 ];
 
 export default function Sidebar() {

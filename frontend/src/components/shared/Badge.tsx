@@ -1,8 +1,11 @@
+import React from "react";
+
 type BadgeColor = "green" | "red" | "amber" | "blue" | "gray" | "purple" | "teal";
 
 interface BadgeProps {
-  label: string;
+  label?: string;
   color?: BadgeColor;
+  children?: React.ReactNode;
 }
 
 const colorMap: Record<BadgeColor, string> = {
@@ -15,12 +18,12 @@ const colorMap: Record<BadgeColor, string> = {
   teal: "bg-teal-100 text-teal-900 border border-teal-300",
 };
 
-export default function Badge({ label, color = "gray" }: BadgeProps) {
+export default function Badge({ label, color = "gray", children }: BadgeProps) {
   return (
     <span
       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${colorMap[color]}`}
     >
-      {label}
+      {children ?? label}
     </span>
   );
 }
